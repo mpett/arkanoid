@@ -11,7 +11,7 @@
 using namespace std;
 using namespace sf;
 
-constexpr int windowWidth{800}, windowHeight{800};
+constexpr int windowHeight{800}, windowWidth{600};
 constexpr float ballRadius{10.f}, ballVelocity{8.f};
 
 // Class for the ball
@@ -30,9 +30,10 @@ struct Ball
     {
         shape.move(velocity);
         if(left() < 0) velocity.x = ballVelocity;
-        else if (right() > windowWidth) velocity.x = -ballVelocity;
+        else if (right() > windowHeight) velocity.x = -ballVelocity;
+        
         if (top() < 0) velocity.y = ballVelocity;
-        if (bottom() > windowHeight) velocity.y = -ballVelocity;
+        if (bottom() > windowWidth) velocity.y = -ballVelocity;
     }
     
     // Property methods
