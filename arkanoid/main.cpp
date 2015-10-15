@@ -12,14 +12,15 @@ using namespace std;
 using namespace sf;
 
 constexpr int windowHeight{600}, windowWidth{800};
-constexpr float ballRadius{10.f}, ballVelocity{8.f}, paddleVelocity{8.f};
-constexpr float paddleWidth{100.f}, paddleHeight{20.f};
+constexpr float ballRadius{10.f}, ballVelocity{10.f};
+constexpr float paddleWidth{100.f}, paddleHeight{10.f}, paddleVelocity{8.f};
 
 // Class for the ball
 struct Ball
 {
     CircleShape shape;
     Vector2f velocity{-ballVelocity, -ballVelocity};
+    
     Ball(float mX, float mY)
     {
         shape.setPosition(mX, mY);
@@ -27,6 +28,7 @@ struct Ball
         shape.setFillColor(Color::Red);
         shape.setOrigin(ballRadius, ballRadius);
     }
+    
     void update()
     {
         shape.move(velocity);
@@ -71,9 +73,26 @@ struct Paddle
     float y()       {return shape.getPosition().y;}
     float left()    {return x() - shape.getSize().x / 2.f;}
     float right()   {return x() + shape.getSize().x / 2.f;}
-    float top()     {return x() - shape.getSize().y / 2.f;}
-    float bottom()  {return x() + shape.getSize().y / 2.f;}
+    float top()     {return y() - shape.getSize().y / 2.f;}
+    float bottom()  {return y() + shape.getSize().y / 2.f;}
 };
+
+template<class T1, class T2>
+bool isIntersecting(T1& mA, T2& mB)
+{
+    return mA.right() >= mB.left() && mA.left() <= mB.right()
+        && mA.bottom() >= mB.top() && mA.top() <= mB.bottom();
+}
+
+void testCollision(Paddle& mPaddle, Ball& mBall)
+{
+    if(!isIntersecting(mPaddle, mBall)) return;
+    mBall.velocity.y = -ballVelocity;
+    if(mBall.x() < mPaddle.x())
+        mBall.velocity.x = -ballVelocity;
+    else
+        mBall.velocity.x = ballVelocity;
+}
 
 // Main game loop
 int main()
@@ -85,19 +104,16 @@ int main()
     window.setFramerateLimit(60);
     
     while (true) {
-        
         // Clear the window from old graphics
         window.clear(Color::Black);
         // Exit the loop if the player presses "Escape"
-        if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) {
+        if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
             break;
-        }
+        testCollision(paddle, ball);
         ball.update();
         paddle.update();
-        
         window.draw(paddle.shape);
         window.draw(ball.shape);
-        
         window.display();
         Event event;
         window.pollEvent(event);
