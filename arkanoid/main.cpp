@@ -3,7 +3,6 @@
 //  arkanoid
 //
 //  Created by Martin Pettersson on 15/10/15.
-//  Copyright © 2015 Martin Pettersson. All rights reserved.
 //
 #include <stdio.h>
 #include <SFML/Window.hpp>
@@ -13,9 +12,25 @@ using namespace std;
 using namespace sf;
 
 constexpr int windowWidth{800}, windowHeight{600};
+constexpr float ballRadius{10.f};
 
+// Class for the ball
+struct Ball
+{
+    CircleShape shape;
+    Ball(float mX, float mY)
+    {
+        shape.setPosition(mX, mY);
+        shape.setRadius(ballRadius);
+        shape.setFillColor(Color::Red);
+        shape.setOrigin(ballRadius, ballRadius);
+    }
+};
+
+// Main game loop
 int main()
 {
+    Ball ball{windowWidth / 2, windowHeight / 2};
     // Creation of the game window
     RenderWindow window{{windowHeight,windowWidth}, "Arkanoid"};
     window.setFramerateLimit(60);
@@ -29,7 +44,7 @@ int main()
         }
         Event event;
         window.pollEvent(event);
-        // Display the contents of the window
+        window.draw(ball.shape);
         window.display();
     }
 }
