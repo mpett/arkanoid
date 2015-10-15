@@ -11,19 +11,24 @@
 using namespace std;
 using namespace sf;
 
-constexpr int windowWidth{800}, windowHeight{600};
-constexpr float ballRadius{10.f};
+constexpr int windowWidth{800}, windowHeight{800};
+constexpr float ballRadius{10.f}, ballVelocity{8.f};
 
 // Class for the ball
 struct Ball
 {
     CircleShape shape;
+    Vector2f velocity{-ballVelocity, -ballVelocity};
     Ball(float mX, float mY)
     {
         shape.setPosition(mX, mY);
         shape.setRadius(ballRadius);
         shape.setFillColor(Color::Red);
         shape.setOrigin(ballRadius, ballRadius);
+    }
+    void update()
+    {
+        shape.move(velocity);
     }
 };
 
@@ -42,11 +47,10 @@ int main()
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) {
             break;
         }
+        ball.update();
         Event event;
         window.pollEvent(event);
         window.draw(ball.shape);
         window.display();
     }
 }
-
-
