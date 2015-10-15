@@ -27,6 +27,8 @@ int main()
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) {
             break;
         }
+        Event event;
+        window.pollEvent(event);
         // Display the contents of the window
         window.display();
     }
