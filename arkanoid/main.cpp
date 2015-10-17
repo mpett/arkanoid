@@ -1,6 +1,5 @@
 //
-//  p1.cpp
-//  arkanoid
+//  Arkanoid
 //
 //  Created by Martin Pettersson on 15/10/15.
 //
@@ -14,8 +13,29 @@ using namespace sf;
 constexpr int windowHeight{600}, windowWidth{800};
 constexpr float ballRadius{10.f}, ballVelocity{10.f};
 constexpr float paddleWidth{100.f}, paddleHeight{10.f}, paddleVelocity{8.f};
+constexpr float blockWidth{60.f}, blockHeight{20.f};
+constexpr int countBlocksX{11}, countBlocksY{4};
 
-// Class for the ball
+struct Brick
+{
+    RectangleShape shape;
+    bool destroyed{false};
+    Brick(float mX, float mY)
+    {
+        shape.setPosition(mX, mY);
+        shape.setSize({blockWidth, blockHeight});
+        shape.setFillColor(Color::Cyan);
+        shape.setOrigin(blockWidth / 2.f, blockHeight / 2.f);
+    }
+    
+    float x()       {return shape.getPosition().x;}
+    float y()       {return shape.getPosition().y;}
+    float left()    {return x() - shape.getSize().x / 2.f;}
+    float right()   {return x() + shape.getSize().x / 2.f;}
+    float top()     {return y() - shape.getSize().y / 2.f;}
+    float bottom()  {return y() + shape.getSize().y / 2.f;}
+};
+
 struct Ball
 {
     CircleShape shape;
@@ -99,14 +119,14 @@ int main()
 {
     Ball ball{windowWidth / 2, windowHeight / 2};
     Paddle paddle{windowWidth / 2, windowHeight - 50};
-    // Creation of the game window
+    vector<Brick> bricks;
+    for (int iX{0}; iX < countBlocksX; ++iX)
+        for (int iY{0}; iY < countBlocksY; ++iY)
+            bricks.emplace_back((iX + 1) * (blockWidth + 3) + 22, (iY + 2) * (blockHeight + 3));
     RenderWindow window{{windowWidth,windowHeight}, "Arkanoid"};
     window.setFramerateLimit(60);
-    
     while (true) {
-        // Clear the window from old graphics
         window.clear(Color::Black);
-        // Exit the loop if the player presses "Escape"
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
             break;
         testCollision(paddle, ball);
@@ -114,6 +134,7 @@ int main()
         paddle.update();
         window.draw(paddle.shape);
         window.draw(ball.shape);
+        for (auto& brick : bricks) window.draw(brick.shape);
         window.display();
         Event event;
         window.pollEvent(event);
