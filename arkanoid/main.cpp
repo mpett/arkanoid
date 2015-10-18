@@ -58,7 +58,6 @@ struct Ball
         if (bottom() > windowHeight) velocity.y = -ballVelocity;
     }
     
-    // Property methods
     float x()       {return shape.getPosition().x;}
     float y()       {return shape.getPosition().y;}
     float left()    {return x() - shape.getRadius();}
@@ -88,7 +87,7 @@ struct Paddle
             velocity.x = paddleVelocity;
         else velocity.x = 0;
     }
-    // Property methods
+    
     float x()       {return shape.getPosition().x;}
     float y()       {return shape.getPosition().y;}
     float left()    {return x() - shape.getSize().x / 2.f;}
@@ -114,7 +113,6 @@ void testCollision(Paddle& mPaddle, Ball& mBall)
         mBall.velocity.x = ballVelocity;
 }
 
-// Main game loop
 int main()
 {
     Ball ball{windowWidth / 2, windowHeight / 2};
