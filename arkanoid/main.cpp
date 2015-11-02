@@ -4,6 +4,7 @@
 //  Created by Martin Pettersson on 15/10/15.
 //
 #include <stdio.h>
+#include <math.h>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -11,7 +12,7 @@ using namespace std;
 using namespace sf;
 
 constexpr int windowHeight{600}, windowWidth{800};
-constexpr float ballRadius{10.f}, ballVelocity{10.f};
+constexpr float ballRadius{10.f}, ballVelocity{11.f};
 constexpr float paddleWidth{100.f}, paddleHeight{10.f}, paddleVelocity{8.f};
 constexpr float blockWidth{60.f}, blockHeight{20.f};
 constexpr int countBlocksX{11}, countBlocksY{4};
@@ -113,6 +114,31 @@ void testCollision(Paddle& mPaddle, Ball& mBall)
         mBall.velocity.x = ballVelocity;
 }
 
+void testCollision(Brick &mBrick, Ball &mBall)
+{
+    if (!isIntersecting(mBrick, mBall))
+        return;
+    
+    mBrick.destroyed = true;
+    
+    float overlapLeft   {mBall.right() - mBall.left()};
+    float overlapRight  {mBall.right() - mBall.left()};
+    float overlapTop    {mBall.bottom() - mBall.top()};
+    float overlapBottom {mBall.bottom() - mBall.top()};
+    
+    bool ballFromLeft{fabs(overlapLeft) < fabs(overlapRight)};
+    bool ballFromTop{fabs(overlapTop) < fabs( overlapBottom)};
+    
+    float minOverlapX{ballFromLeft ? overlapLeft : overlapRight};
+    float minOverLapY{ballFromTop ? overlapTop : overlapBottom};
+    
+    if (fabs(minOverlapX) < fabs(minOverLapY))
+        mBall.velocity.x = ballFromLeft ? -ballVelocity : ballVelocity;
+    else
+        mBall.velocity.y = ballFromTop ? -ballVelocity : ballVelocity;
+    
+}
+
 int main()
 {
     Ball ball{windowWidth / 2, windowHeight / 2};
@@ -131,6 +157,13 @@ int main()
         ball.update();
         paddle.update();
         window.draw(paddle.shape);
+        
+        for (auto& brick : bricks) {
+            testCollision(brick, ball);
+        }
+        bricks.erase(remove_if(begin(bricks), end(bricks), [](const Brick& mBrick){return mBrick.destroyed;}), end(bricks));
+        
+        
         window.draw(ball.shape);
         for (auto& brick : bricks) window.draw(brick.shape);
         window.display();
