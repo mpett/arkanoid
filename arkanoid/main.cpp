@@ -130,8 +130,6 @@ void testCollision(Brick &mBrick, Ball &mBall)
     if (!isIntersecting(mBrick, mBall))
         return;
     
-    mBrick.destroyed = true;
-    
     float overlapLeft   {mBall.right() - mBall.left()};
     float overlapRight  {mBall.right() - mBall.left()};
     float overlapTop    {mBall.bottom() - mBall.top()};
@@ -147,6 +145,13 @@ void testCollision(Brick &mBrick, Ball &mBall)
         mBall.velocity.x = ballFromLeft ? -ballVelocity : ballVelocity;
     else
         mBall.velocity.y = ballFromTop ? -ballVelocity : ballVelocity;
+    
+    if (mBrick.health > 0){
+        --mBrick.health;
+        return;
+    }
+    
+    mBrick.destroyed = true;
     
 }
 
