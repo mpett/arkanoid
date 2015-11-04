@@ -21,17 +21,23 @@ struct Brick
 {
     RectangleShape shape;
     bool destroyed{false};
-    int red = rand() % 255;
-    int green = rand() % 255;
-    int blue = rand() % 255;
-    sf::Color color{static_cast<Uint8>(red), static_cast<Uint8>(green), static_cast<Uint8>(blue)};
+    int health = 2;
     
     Brick(float mX, float mY)
     {
         shape.setPosition(mX, mY);
         shape.setSize({blockWidth, blockHeight});
-        shape.setFillColor(color);
         shape.setOrigin(blockWidth / 2.f, blockHeight / 2.f);
+        updateColor();
+    }
+    
+    void updateColor()
+    {
+        int red = rand() % 255;
+        int green = rand() % 255;
+        int blue = rand() % 255;
+        sf::Color color{static_cast<Uint8>(red), static_cast<Uint8>(green), static_cast<Uint8>(blue)};
+        shape.setFillColor(color);
     }
     
     float x()       {return shape.getPosition().x;}
