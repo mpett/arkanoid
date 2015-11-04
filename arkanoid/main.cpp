@@ -1,5 +1,5 @@
 //
-//  Arkanoid
+//  Disco Arkanoid
 //
 //  Created by Martin Pettersson on 15/10/15.
 //
@@ -145,15 +145,12 @@ void testCollision(Brick &mBrick, Ball &mBall)
         mBall.velocity.x = ballFromLeft ? -ballVelocity : ballVelocity;
     else
         mBall.velocity.y = ballFromTop ? -ballVelocity : ballVelocity;
-    
     if (mBrick.health > 0){
         --mBrick.health;
         mBrick.updateColor();
         return;
     }
-    
     mBrick.destroyed = true;
-    
 }
 
 int main()
@@ -166,10 +163,12 @@ int main()
             bricks.emplace_back((iX + 1) * (blockWidth + 3) + 22, (iY + 2) * (blockHeight + 3));
     RenderWindow window{{windowWidth,windowHeight}, "Arkanoid"};
     window.setFramerateLimit(60);
+    
     while (true) {
         window.clear(Color::Black);
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape) || bricks.empty())
             break;
+        
         testCollision(paddle, ball);
         ball.update();
         paddle.update();
@@ -178,11 +177,13 @@ int main()
         for (auto& brick : bricks) {
             testCollision(brick, ball);
         }
+        
         bricks.erase(remove_if(begin(bricks), end(bricks), [](const Brick& mBrick){return mBrick.destroyed;}), end(bricks));
         
-        
         window.draw(ball.shape);
+        
         for (auto& brick : bricks) window.draw(brick.shape);
+        
         window.display();
         Event event;
         window.pollEvent(event);
