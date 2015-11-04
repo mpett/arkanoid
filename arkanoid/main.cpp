@@ -148,6 +148,7 @@ void testCollision(Brick &mBrick, Ball &mBall)
     
     if (mBrick.health > 0){
         --mBrick.health;
+        mBrick.updateColor();
         return;
     }
     
