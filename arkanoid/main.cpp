@@ -151,7 +151,7 @@ int main()
     window.setFramerateLimit(60);
     while (true) {
         window.clear(Color::Black);
-        if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
+        if (Keyboard::isKeyPressed(Keyboard::Key::Escape) || bricks.empty())
             break;
         testCollision(paddle, ball);
         ball.update();
