@@ -7,9 +7,12 @@
 #include <math.h>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <chrono>
 
 using namespace std;
 using namespace sf;
+
+using FrameTime = float;
 
 constexpr int windowHeight{600}, windowWidth{800};
 constexpr float ballRadius{10.f}, ballVelocity{11.f};
@@ -158,10 +161,16 @@ int main()
     for (int iX{0}; iX < countBlocksX; ++iX)
         for (int iY{0}; iY < countBlocksY; ++iY)
             bricks.emplace_back((iX + 1) * (blockWidth + 3) + 22, (iY + 2) * (blockHeight + 3));
+    
     RenderWindow window{{windowWidth,windowHeight}, "Arkanoid"};
-    window.setFramerateLimit(60);
+    
+    //window.setFramerateLimit(60);
     
     while (true) {
+        
+        // Start time interval
+        auto timePoint1(chrono::high_resolution_clock::now());
+        
         window.clear(Color::Black);
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape) || bricks.empty())
             break;
@@ -182,6 +191,20 @@ int main()
         for (auto& brick : bricks) window.draw(brick.shape);
         
         window.display();
+        
+        // End time interval
+        auto timePoint2(chrono::high_resolution_clock::now());
+        
+        auto elapsedTime(timePoint2 - timePoint1);
+        
+        // Count frame time
+        FrameTime ft{chrono::duration_cast<chrono::duration<float,milli>>(elapsedTime).count()};
+        
+        auto ftSeconds(ft / 1000.f);
+        auto fps(1.f / ftSeconds);
+        
+        window.setTitle("FT: " + to_string(ft) + "\tFPS: " + to_string(fps));
+        
         Event event;
         window.pollEvent(event);
     }
