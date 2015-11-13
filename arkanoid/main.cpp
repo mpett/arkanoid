@@ -68,9 +68,9 @@ struct Ball
         shape.setOrigin(ballRadius, ballRadius);
     }
     
-    void update()
+    void update(FrameTime frameTime)
     {
-        shape.move(velocity);
+        shape.move(velocity * frameTime);
         if(left() < 0) velocity.x = ballVelocity;
         else if (right() > windowWidth) velocity.x = -ballVelocity;
         if (top() < 0) velocity.y = ballVelocity;
@@ -96,9 +96,9 @@ struct Paddle : Rectangle
         shape.setOrigin(paddleWidth / 2.f, paddleHeight / 2.f);
     }
     
-    void update()
+    void update(FrameTime frameTime)
     {
-        shape.move(velocity);
+        shape.move(velocity * frameTime);
         if(Keyboard::isKeyPressed(Keyboard::Key::Left) && left() > 0)
             velocity.x = -paddleVelocity;
         
@@ -164,6 +164,9 @@ int main()
     
     RenderWindow window{{windowWidth,windowHeight}, "Arkanoid"};
     
+    FrameTime lastFrameTime{0.1f};
+    
+    window.setFramerateLimit(240);
     //window.setFramerateLimit(60);
     
     while (true) {
@@ -176,8 +179,8 @@ int main()
             break;
         
         testCollision(paddle, ball);
-        ball.update();
-        paddle.update();
+        ball.update(lastFrameTime);
+        paddle.update(lastFrameTime);
         window.draw(paddle.shape);
         
         for (auto& brick : bricks) {
