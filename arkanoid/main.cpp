@@ -166,9 +166,6 @@ int main()
     
     FrameTime lastFrameTime{0.1f};
     
-    //window.setFramerateLimit(240);
-    //window.setFramerateLimit(60);
-    
     while (true) {
         
         // Start time interval
