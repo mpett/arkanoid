@@ -175,6 +175,15 @@ int main()
         auto timePoint1(chrono::high_resolution_clock::now());
         
         window.clear(Color::Black);
+        
+        Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == Event::Closed) {
+                window.close();
+                break;
+            }
+        }
+        
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape) || bricks.empty())
             break;
         
@@ -208,8 +217,7 @@ int main()
         
         window.setTitle("FT: " + to_string(ft) + "\tFPS: " + to_string(fps));
         
-        Event event;
-        window.pollEvent(event);
+        
     }
     return 0;
 }
