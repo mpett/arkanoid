@@ -20,6 +20,8 @@ constexpr float paddleWidth{100.f}, paddleHeight{10.f}, paddleVelocity{60.f};
 constexpr float blockWidth{60.f}, blockHeight{20.f};
 constexpr int countBlocksX{11}, countBlocksY{4};
 
+constexpr float ftStep{1.f}, ftSlice{1.f};
+
 struct Rectangle
 {
     RectangleShape shape;
@@ -166,6 +168,10 @@ int main()
     
     FrameTime lastFrameTime{0.1f};
     
+    FrameTime currentSlice{0.f};
+    
+    window.setFramerateLimit(240);
+    
     while (true) {
         
         // Start time interval
@@ -184,17 +190,22 @@ int main()
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape) || bricks.empty())
             break;
         
-        testCollision(paddle, ball);
-        ball.update(lastFrameTime);
-        paddle.update(lastFrameTime);
-        window.draw(paddle.shape);
+        currentSlice += lastFrameTime;
         
-        for (auto& brick : bricks) {
-            testCollision(brick, ball);
+        for (; currentSlice >= ftSlice ; currentSlice -= ftSlice) {
+            ball.update(ftStep);
+            paddle.update(ftStep);
+            
+            testCollision(paddle, ball);
+            
+            for (auto& brick : bricks) {
+                testCollision(brick, ball);
+            }
+            
+            bricks.erase(remove_if(begin(bricks), end(bricks), [](const Brick& mBrick){return mBrick.destroyed;}), end(bricks));
         }
         
-        bricks.erase(remove_if(begin(bricks), end(bricks), [](const Brick& mBrick){return mBrick.destroyed;}), end(bricks));
-        
+        window.draw(paddle.shape);
         window.draw(ball.shape);
         
         for (auto& brick : bricks) window.draw(brick.shape);
